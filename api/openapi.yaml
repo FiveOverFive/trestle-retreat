@@ -1,0 +1,336 @@
+openapi: 3.0.0
+info:
+  title: Airbnb Rental API
+  description: API for managing Airbnb rental property data and inquiries
+  version: 1.0.0
+  contact:
+    name: Property Host
+    email: host@example.com
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://your-domain.com/api
+    description: Production server
+
+paths:
+  /property:
+    get:
+      summary: Get property details
+      operationId: getProperty
+      tags:
+        - Property
+      responses:
+        '200':
+          description: Property details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+
+  /availability:
+    get:
+      summary: Get availability calendar
+      operationId: getAvailability
+      tags:
+        - Booking
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Availability data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Availability'
+
+  /contact:
+    post:
+      summary: Submit contact inquiry
+      operationId: submitContact
+      tags:
+        - Contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactForm'
+      responses:
+        '201':
+          description: Inquiry submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /reviews:
+    get:
+      summary: Get property reviews
+      operationId: getReviews
+      tags:
+        - Reviews
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+
+components:
+  schemas:
+    Property:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - bedrooms
+        - bathrooms
+        - maxGuests
+        - pricePerNight
+      properties:
+        id:
+          type: string
+          example: "prop-123"
+        title:
+          type: string
+          example: "Cozy Downtown Apartment"
+        description:
+          type: string
+          example: "Beautiful 2-bedroom apartment in the heart of downtown"
+        bedrooms:
+          type: integer
+          example: 2
+        bathrooms:
+          type: integer
+          example: 1
+        maxGuests:
+          type: integer
+          example: 4
+        pricePerNight:
+          type: number
+          format: float
+          example: 120.00
+        amenities:
+          type: array
+          items:
+            type: string
+          example: ["WiFi", "Kitchen", "Parking", "Air Conditioning"]
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        location:
+          $ref: '#/components/schemas/Location'
+        houseRules:
+          type: array
+          items:
+            type: string
+          example: ["No smoking", "No pets", "Check-in after 3 PM"]
+
+    Image:
+      type: object
+      required:
+        - id
+        - url
+        - alt
+      properties:
+        id:
+          type: string
+          example: "img-123"
+        url:
+          type: string
+          format: uri
+          example: "https://example.com/images/living-room.jpg"
+        alt:
+          type: string
+          example: "Spacious living room with modern furniture"
+        caption:
+          type: string
+          example: "Living room area"
+
+    Location:
+      type: object
+      required:
+        - address
+        - city
+        - state
+        - zipCode
+      properties:
+        address:
+          type: string
+          example: "123 Main Street"
+        city:
+          type: string
+          example: "Downtown"
+        state:
+          type: string
+          example: "CA"
+        zipCode:
+          type: string
+          example: "90210"
+        latitude:
+          type: number
+          format: float
+          example: 34.0522
+        longitude:
+          type: number
+          format: float
+          example: -118.2437
+        nearbyAttractions:
+          type: array
+          items:
+            type: string
+          example: ["Central Park", "Museum", "Shopping District"]
+
+    Availability:
+      type: object
+      required:
+        - dates
+      properties:
+        dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateAvailability'
+
+    DateAvailability:
+      type: object
+      required:
+        - date
+        - available
+        - price
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2024-03-15"
+        available:
+          type: boolean
+          example: true
+        price:
+          type: number
+          format: float
+          example: 120.00
+        minStay:
+          type: integer
+          example: 2
+
+    ContactForm:
+      type: object
+      required:
+        - name
+        - email
+        - message
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        phone:
+          type: string
+          example: "+1-555-123-4567"
+        checkIn:
+          type: string
+          format: date
+          example: "2024-03-15"
+        checkOut:
+          type: string
+          format: date
+          example: "2024-03-18"
+        guests:
+          type: integer
+          example: 2
+        message:
+          type: string
+          example: "I'm interested in booking your property"
+
+    ContactResponse:
+      type: object
+      required:
+        - id
+        - status
+        - message
+      properties:
+        id:
+          type: string
+          example: "inquiry-123"
+        status:
+          type: string
+          example: "submitted"
+        message:
+          type: string
+          example: "Your inquiry has been submitted successfully"
+
+    Review:
+      type: object
+      required:
+        - id
+        - guestName
+        - rating
+        - comment
+        - date
+      properties:
+        id:
+          type: string
+          example: "review-123"
+        guestName:
+          type: string
+          example: "Sarah M."
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          example: "Amazing place! Very clean and great location."
+        date:
+          type: string
+          format: date
+          example: "2024-02-15"
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          example: "Invalid input data"
+        details:
+          type: array
+          items:
+            type: string
+          example: ["Email is required", "Name must be at least 2 characters"]

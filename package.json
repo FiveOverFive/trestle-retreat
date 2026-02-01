@@ -1,0 +1,31 @@
+{
+  "name": "trestle-retreat",
+  "version": "1.0.0",
+  "description": "Trestle Retreat - Beautiful short-term rental property",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate-api": "openapi-generator-cli generate -i api/openapi.yaml -g typescript-axios -o src/lib/api",
+    "spec-validate": "swagger-codegen-cli validate -i api/openapi.yaml"
+  },
+  "dependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "autoprefixer": "^10.4.0",
+    "axios": "^1.6.0",
+    "next": "^15.5.4",
+    "postcss": "^8.4.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.0"
+  }
+}
